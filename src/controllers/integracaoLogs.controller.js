@@ -341,7 +341,7 @@ integracaoLogs.postRetornoRouteasy = async (req, res) =>{
             let result2 = await pool.request()
                 .input('COD_ROUTER' , sql.VarChar(sql.MAX)   , cod_roteirizacao)
                 .input('ZONA'       , sql.VarChar(sql.MAX)  , cod_rota)
-                .input('JSON'       , sql.VarChar(sql.MAX) , req.body )
+                .input('JSON'       , sql.VarChar(sql.MAX) , JSON.stringify(req.body) )
                 .input('JSON_PARSE' , sql.VarChar(sql.MAX) , JSON.stringify(parse))
                 .input('TOKEN'      , sql.VarChar(sql.MAX) , parse[0].first_version )
                 .input('TIPO'       , sql.Char(1)    , 'R')
