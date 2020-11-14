@@ -72,10 +72,10 @@ integracaoLogs.getLogin = (req, res) => {
 
                 if(achou ==0){
                     conn.close();
-                    res.json({msg:'Usuário sem acesso!' , data: []});
+                    res.json({msg:'Usuário sem acesso!' , data: [] , status: res.status});
                 }else{
                     conn.close();
-                    res.json({msg:'Success', data:recordset.recordset[0]});
+                    res.json({msg:'Success', data:recordset.recordset[0], status: res.status});
                 }
 
             })
