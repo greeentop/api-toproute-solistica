@@ -1,0 +1,9 @@
+
+IF (OBJECT_ID('TEMPDB..##paulo')) IS NOT NULL  BEGIN DROP table ##paulo END 
+
+CREATE table ##paulo (
+    id                  int identity(1,1)
+    , DATA_OPERACAO	    datetime
+    , nome	    VARCHAR(10) 
+)
+
