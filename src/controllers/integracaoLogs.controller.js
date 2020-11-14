@@ -344,7 +344,7 @@ integracaoLogs.postRetornoRouteasy = async (req, res) =>{
                 .input('JSON'       , sql.VarChar(sql.MAX) , req.body )
                 .input('JSON_PARSE' , sql.VarChar(sql.MAX) , JSON.stringify(parse))
                 .input('TOKEN'      , sql.VarChar(sql.MAX) , parse[0].first_version )
-                .input('TIPO'       , sql.Char(1)    , 'E')
+                .input('TIPO'       , sql.Char(1)    , 'R')
                 // .output('output_parameter', sql.VarChar(50))
                 .execute('SP_SAVE_JSON_ROTEIRIZACAO_PAYLOAD')
 
