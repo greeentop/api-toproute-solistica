@@ -72,10 +72,10 @@ integracaoLogs.getLogin = (req, res) => {
 
                 if(achou ==0){
                     conn.close();
-                    res.json({msg:'Usuário sem acesso!' , data: [] , status: res.status });
+                    res.json({msg:'Usuario sin acceso!' , data: [] , status: 401});
                 }else{
                     conn.close();
-                    res.json({msg:'Success', data:recordset.recordset[0],status: res.status});
+                    res.json({msg:'Success', data:recordset.recordset[0], status: 200});
                 }
 
             })
@@ -85,7 +85,7 @@ integracaoLogs.getLogin = (req, res) => {
             });
     })
     .catch(function (err) {
-        // console.log(err)
+        console.log(err)
         conn.close();
         res.status(400).send(err);
     })
@@ -239,136 +239,7 @@ integracaoLogs.getRouters = (req, res) => {
             })
 
 
-};
-
-integracaoLogs.put_clear_cajas  =  (req, res) =>{
-
-    const {headers ,  body ,  route} =  req ; 
-
-    if(conn._connecting==true){
-        
-        conn.close();
-
-    }
-    
-  
-    conn.connect()
-        .then(function () {
-
-            body.forEach(function (item) {
-                    
-                const sqlQ = `
-                UPDATE a SET  
-                    a.VEHICULE_PLACA               =   null
-                    ,a.SERVICIOS_SECUENCIA_ENTREGA  =   null    
-                    ,a.ZONA                         =   null
-                    ,a.VEHICULO_PLACA               =   null
-                FROM  TB_INTEGRACION_SERVICIOS  a  
-                WHERE ID_SERVICIO = ${item.ID_SERVICIO} `
-
-                // console.log(sqlQ) ;
-
-                var req = new sql.Request(conn);
-
-                req.query(sqlQ)
-                    .then(function (result) {
-
-                         conn.close();
-                        //res.json(result.rowsAffected);
-                    })
-                    .catch(function (err, status) {
-                        conn.close();
-                        res.status(400).send('error get data' + err);
-                    });
-            })
-            res.status(200).json( { msg:'update success'});
-        })
-};
-
-integracaoLogs.putRota  =  (req, res )   => {
-     const {headers ,  body ,  route} =  req ; 
-
-
-        conn.close();
-
-        conn.connect()
-            .then(function () {
-
-
-                body.forEach(function (item) {
-                    
-                    const sqlQ = `
-                    UPDATE a SET  
-                        a.ZONA  = ${item.ZONA}
-                    FROM  TB_INTEGRACION_SERVICIOS  a  
-                    WHERE ID_SERVICIO = ${item.ID_SERVICIO} `
-    
-                    // console.log(sqlQ) ;
-    
-                    var req = new sql.Request(conn);
-    
-                    req.query(sqlQ)
-                        .then(function (result) {
-    
-                            conn.close();
-                            //res.json(result.rowsAffected);
-                        })
-                        .catch(function (err, status) {
-                            conn.close();
-                            res.status(400).send('error get data' + err);
-                        });
-                })
-                
-            })
-            .catch(function (err) {
-                conn.close();
-                res.status(400).send('error get data fora');
-            })
-        
-
-         //console.log(`Numero do serviço que vai ser dado update ${item.ID_SERVICIO} para a rota ${item.ZONA}`)
-        //  item.SERVICIOS_CODIGO
-
-        
-
-        res.status(200).send()
-        return
-     
-    try {
-        conn.close();
-        
-        conn.connect()
-        .then(function () {
-    
-            const sqlQ = `
-                UPDATE a set  
-                    a.VEHICULO_PLACA  = 'emf-8335' 
-                FROM  TB_INTEGRACION_SERVICIOS  a  
-                WHERE SERVICIOS_CODIGO = 6728344 `
-        
-            var req = new sql.Request(conn);
-        
-            req.query(sqlQ)
-                .then(function (result) {
-                    
-                    conn.close();
-                    res.json(result.rowsAffected);
-                })
-                .catch(function (err, status) {
-                    conn.close();
-                    res.status(400).send('error get data' + err);
-                });
-        })
-        .catch(function (err) {
-            conn.close();
-            res.status(400).send('error get data fora');
-        })
-        
-    } catch (error) {
-        conn.close();
-        
-    }
-};
+}
 
 
 integracaoLogs.putServiciosReturn = (req, res) => {
@@ -418,8 +289,26 @@ try {
 
 
 
+function updateRetorno (parse){
+
+    try {
+        
+
+       
+    
+
+       
+    } catch (error) {
+
+        console.log(error)
+        
+    }
+
+}
+
 integracaoLogs.postRetornoRouteasy = async (req, res) =>{
 
+  
         try {
 
             const route             =   req.body.routing.name.split('-')
@@ -452,10 +341,10 @@ integracaoLogs.postRetornoRouteasy = async (req, res) =>{
             let result2 = await pool.request()
                 .input('COD_ROUTER' , sql.VarChar(sql.MAX)   , cod_roteirizacao)
                 .input('ZONA'       , sql.VarChar(sql.MAX)  , cod_rota)
-                .input('JSON'       , sql.VarChar(sql.MAX) , req.body )
+                .input('JSON'       , sql.VarChar(sql.MAX) , JSON.stringify(req.body) )
                 .input('JSON_PARSE' , sql.VarChar(sql.MAX) , JSON.stringify(parse))
                 .input('TOKEN'      , sql.VarChar(sql.MAX) , parse[0].first_version )
-                .input('TIPO'       , sql.Char(1)    , 'E')
+                .input('TIPO'       , sql.Char(1)    , 'R')
                 // .output('output_parameter', sql.VarChar(50))
                 .execute('SP_SAVE_JSON_ROTEIRIZACAO_PAYLOAD')
 
@@ -466,7 +355,7 @@ integracaoLogs.postRetornoRouteasy = async (req, res) =>{
                  pool.close();
 
         } catch (err) {
-            // console.log(err)
+            console.log(err)
 
             res.json(err)
             pool.close();
@@ -549,7 +438,7 @@ integracaoLogs.postRetornoRouteasy = async (req, res) =>{
                         conn.close();
                         // ... error checks
     
-                        // console.log("Transaction committed. : " +    JSON.stringify( transaction))
+                        console.log("Transaction committed. : " +    JSON.stringify( transaction))
     
                         res.json('Enviado com sucesso')
                     })
@@ -588,10 +477,15 @@ integracaoLogs.postEnvioRouteasy = async (req, res,next) =>{
         req.body.site = site
         const postData =  req.body; 
     
+
+        var myString = 'Hello World. How are you doing?';
+var splits = myString.split(' ', 3);
+
+        console.log(splits)
         const route             =  postData.name.split('-')
         const cod_roteirizacao  =   route[0]
         const cod_rota          =   route[1]
-        //  console.log(postData)
+         console.log(postData)
     
         // res.json(ulr + api_key);
         // Requisições POST, note há um parâmetro extra indicando os parâmetros da requisição
@@ -602,8 +496,8 @@ integracaoLogs.postEnvioRouteasy = async (req, res,next) =>{
             }
           })
         .then( function(response){
-        
-            // console.log( response.data.token)
+            console.log('ppp')
+            console.log( response.data.token)
 
 
 
@@ -624,7 +518,7 @@ integracaoLogs.postEnvioRouteasy = async (req, res,next) =>{
                             conn.close();
                             // ... error checks
         
-                            // console.log("Transaction committed.")
+                            console.log("Transaction committed.")
                             res.json( { msg:'Token de retorno do envio' ,  token:response.data.token} )
                             // res.json('Enviado com sucesso')
                         })
@@ -648,8 +542,8 @@ integracaoLogs.postEnvioRouteasy = async (req, res,next) =>{
         // res.send('sucesso')
         
     } catch (error) {
-
-        res.json(error.message)
+        console.log(error)
+        res.json(  error)
         // next(error);
         
     }
@@ -657,9 +551,6 @@ integracaoLogs.postEnvioRouteasy = async (req, res,next) =>{
 }
 
 module.exports = integracaoLogs;
-
-
-//#region  functions
 
 
 function parse_retorno_routeasy(req){
@@ -736,51 +627,8 @@ function parse_retorno_routeasy(req){
           retornos.push(rotorno)
         })
     
-          RetornRouteasyIntegration(retornos)
+    
       
     
     return retornos
 }
-
-
-
-
-function RetornRouteasyIntegration (retornos){
- 
-    conn.close();
-    
-    conn.connect()
-        .then(function () {
-
-            retornos[0].locations.forEach(function (ret) {
-                    
-                const sqlQ = `
-                UPDATE a SET  
-                    a.SERVICIOS_SECUENCIA_ENTREGA  =   '${ret.order}'   
-                    ,a.VEHICULE_PLACA               =   '${retornos[0].ident_veiculo}'
-                    ,a.VEHICULO_PLACA               =   '${retornos[0].ident_veiculo}'
-                    FROM  TB_INTEGRACION_SERVICIOS  a  
-                WHERE SERVICIOS_CODIGO = ${ret.order_number}
-                    AND COD_ROUTER = ${retornos[0].cod_roteirizacao} `
-
-                console.log(sqlQ) ;
-
-                var req = new sql.Request(conn);
-
-                req.query(sqlQ)
-                    .then(function (result) {
-                         conn.close();
-                    })
-                    .catch(function (err, status) {
-                        conn.close();
-                        // res.status(400).send('error get data' + err);
-                    });
-            })
-           
-        })
-}
-
-
-
-
-//#endregion

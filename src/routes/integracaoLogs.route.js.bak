@@ -7,7 +7,6 @@ const swaggerUi = require("swagger-ui-express");
 
 const integracaosCtrl   =  require('../controllers/integracaoLogs.controller');
 const integracaoLogs    = require('../controllers/integracaoLogs.controller');
-const swaggerJSDoc = require('swagger-jsdoc');
 
 // Extended: https://swagger.io/specification/#infoObject
 const swaggerOptions = {
@@ -146,8 +145,7 @@ router.put('/api/updateServicios/:servicios_codigo',integracaosCtrl.putServicios
  *      description: Use to return all customers
  *    parameters:
  *      - name: customer
- *        in: query
- *        description: Name of our customer
+ *        in: query,,,
  *        required: false
  *        schema:
  *          type: string
@@ -155,51 +153,6 @@ router.put('/api/updateServicios/:servicios_codigo',integracaosCtrl.putServicios
  *    responses:
  *      '201':
  *        description: Successfully created user
- */
-//atualiza servico com base no retorno routeasy
-router.put('/api/updateServicios/:servicios_codigo',integracaosCtrl.putServiciosReturn);
-
-
-
-
-/**
- * @swagger
- * /api/putRota/:
- *    put:
- *      description: Use to return all customers
- *    parameters:
- *      - name: customer
- *        in: query,,,
- *        required: false
- *        schema:
- *          type: string
- *          format: string
- *    responses:
- *      '200':
- *        description: Atualiza a caixa de rota(enviar para caixas)  
- */
-// ENVIA A ROUTEIRIZACAO POR CAIXA OU TODAS AS ROTAS
-router.put('/api/putRota', integracaoLogs.putRota);
-
-
-
-router.put('/api/PUT_ROTA_DOC_REAL', integracaoLogs.put_clear_cajas)
-
-/**
- * @swagger
- * /api/updateServicios/:
- *    put:
- *      description: Use to return all customers
- *    parameters:
- *      - name: customer
- *        in: query,,,
- *        required: false
- *        schema:
- *          type: string
- *          format: string
- *    responses:
- *      '201':
- *        description: Successfully creaUPDATEted user
  */
 // ENVIA A ROUTEIRIZACAO POR CAIXA OU TODAS AS ROTAS
 router.post('/api/envioRouteasy', cors(), integracaoLogs.postEnvioRouteasy)
