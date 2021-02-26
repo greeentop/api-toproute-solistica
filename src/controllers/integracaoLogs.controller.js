@@ -682,8 +682,10 @@ integracaoLogs.getCron = (req, res) => {
     // Mostra o resultado
     try {
         res.status(200).send(`Hoje ${dia}/${mes}/${ano4} às ${str_hora} rodou o metodo Cron GetCron `);
+        console.log(`Hoje ${dia}/${mes}/${ano4} às ${str_hora} rodou o metodo Cron GetCron `)
     } catch (error) {
         res.status(500).send(`${error} metodo: getCron`);
+        console.log(error)
 
     } 
 
