@@ -3,8 +3,8 @@ var connect = function()
 {
 
     ////COLOMBIA
-    const host  = '190.248.148.243'
     // const psw  ='RouteEasy.2020.Sol'
+    const host  = '190.248.148.243'
     const psw  ='Solistica2020'
     const user ='RouteEasy'
     const database='RouteEasy'

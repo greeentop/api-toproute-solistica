@@ -161,6 +161,20 @@ router.put('/api/updateServicios/:servicios_codigo',integracaosCtrl.putServicios
 
 
 
+/**
+ * @swagger
+ * /api/cron    :
+ *  get:
+ *    description: teste
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ */ 
+router.get('/api/cron',cors(),integracaosCtrl.getCron);
+
+
+
+
 
 /**
  * @swagger
