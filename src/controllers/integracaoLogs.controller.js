@@ -616,9 +616,10 @@ integracaoLogs.postEnvioRouteasy = async (req, res, next) => {
                             // ... error checks
 
                             //   console.log(parse[0])
+                            const {usuario} = req.body;
 
                             const request = new sql.Request(transaction)
-                            request.query("insert into TB_JSON_PAYLOAD ( cod_router ,zona, json,JSON_PARSE, TOKEN ,TIPO, dt_created) values ('" + cod_roteirizacao + "','" + cod_rota + "','" + JSON.stringify(req.body) + "','" + JSON.stringify(req.body) + "','" + response.data.token + "','E' , getdate())", (err, result) => {
+                            request.query("insert into TB_JSON_PAYLOAD ( cod_router ,zona, json,JSON_PARSE, TOKEN ,TIPO, dt_created ,user ) values ('" + cod_roteirizacao + "','" + cod_rota + "','" + JSON.stringify(req.body) + "','" + JSON.stringify(req.body) + "','" + response.data.token + "','E' , getdate() ,"+ usuario + ")", (err, result) => {
                                 // ... error checks
 
                                 transaction.commit(err => {
