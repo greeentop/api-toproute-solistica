@@ -574,8 +574,6 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
 integracaoLogs.postEnvioRouteasy = async (req, res, next) => {
 
 
-
-
     try {
         // url: http://company.routeasy.com.br/
         // login: solistica.colombia@routeasy.com.br
@@ -606,8 +604,6 @@ integracaoLogs.postEnvioRouteasy = async (req, res, next) => {
 
                 // console.log( response.data.token)
 
-
-
                 conn.close();
                 conn.connect()
                     .then(function () {
@@ -619,8 +615,10 @@ integracaoLogs.postEnvioRouteasy = async (req, res, next) => {
                             const {usuario} = req.body;
 
                             const request = new sql.Request(transaction)
-                            request.query("insert into TB_JSON_PAYLOAD ( cod_router ,zona, json,JSON_PARSE, TOKEN ,TIPO, dt_created ,user ) values ('" + cod_roteirizacao + "','" + cod_rota + "','" + JSON.stringify(req.body) + "','" + JSON.stringify(req.body) + "','" + response.data.token + "','E' , getdate() ,"+ usuario + ")", (err, result) => {
+                            request.query("insert into TB_JSON_PAYLOAD ( cod_router ,zona, json,JSON_PARSE, TOKEN ,TIPO, dt_created , LOGIN ) values ('" + cod_roteirizacao + "','" + cod_rota + "','" + JSON.stringify(req.body) + "','" + JSON.stringify(req.body) + "','" + response.data.token + "','E' , getdate(),'"+  JSON.stringify(req.body.usuario.replace('""','')) +"')", (err, result) => {
                                 // ... error checks
+                       
+                                
 
                                 transaction.commit(err => {
                                     conn.close();
