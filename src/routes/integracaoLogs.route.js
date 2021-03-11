@@ -25,11 +25,27 @@ const swaggerOptions = {
     // ['.routes/*.js']
     apis: [__filename]
   };
+
+  const swaggerOptionsFator = {
+    swaggerDefinition: {
+      info: {
+        version: "1.0.0",
+        title: "Documentation  API -TopRoute -Colombia",
+        description: "Api TopRoute ",
+        contact: {
+          name: "Greentop "
+        },
+        servers: ["http://localhost:3001"]
+      }
+    },
+    // ['.routes/*.js']
+    apis: [__filename]
+  };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 router.use("/api-documentations", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-router.use("/api-documentations-fator", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+const swaggerDocsFator = swaggerJsDoc(swaggerOptions);
+router.use("/api-documentations-fator", swaggerUi.serve, swaggerUi.setup(swaggerDocsFator));
 
 
 
