@@ -21,6 +21,7 @@ const SERVER_PORT =  8081
 
 
 const intergracaoLogs           = require('./routes/integracaoLogs.route')
+const fatorRouter               = require('./routes/fator')
 
 app.use(cors());
 
@@ -51,7 +52,7 @@ app.use(function(req, res, next) {
 
 
 app.use(intergracaoLogs)
-// app.use(clientesRoute)
+ app.use(fatorRouter)
 // app.use(usuariosRoute)
 // app.use(origensRoute)
 // app.use(maps)

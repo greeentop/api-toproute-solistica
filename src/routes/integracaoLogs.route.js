@@ -241,8 +241,9 @@ router.post('/api/envioRouteasy', cors(), integracaoLogs.postEnvioRouteasy)
 
 router.post('/api/retornoRouteasy', cors(), integracaoLogs.postRetornoRouteasy)
 
+module.exports = router;
 
-module.exports = {
-  routerFator:routerFator 
-  ,router:router
-}
+// module.exports = {
+//   // routerFator:routerFator ,
+//   router:router
+// }
