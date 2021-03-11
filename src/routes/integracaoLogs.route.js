@@ -28,6 +28,9 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 router.use("/api-documentations", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+router.use("/api-documentations-fator", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 
 
 // Routes
