@@ -1,5 +1,6 @@
 const express       = require('express');
 const router        = express.Router();
+const routerFator   = express.Router();
 const cors          = require('cors');
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -35,7 +36,7 @@ const swaggerOptions = {
         contact: {
           name: "Greentop "
         },
-        servers: ["http://localhost:3001"]
+        servers: ["http://localhost:3000"]
       }
     },
     // ['.routes/*.js']
@@ -44,8 +45,8 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 router.use("/api-documentations", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-const swaggerDocsFator = swaggerJsDoc(swaggerOptions);
-router.use("/api-documentations-fator", swaggerUi.serve, swaggerUi.setup(swaggerDocsFator));
+const swaggerDocsFator = swaggerJsDoc(swaggerOptionsFator);
+routerFator.use("/api-documentations-fator", swaggerUi.serve, swaggerUi.setup(swaggerDocsFator));
 
 
 
@@ -241,4 +242,7 @@ router.post('/api/envioRouteasy', cors(), integracaoLogs.postEnvioRouteasy)
 router.post('/api/retornoRouteasy', cors(), integracaoLogs.postRetornoRouteasy)
 
 
-module.exports = router
+module.exports = {
+  routerFator:routerFator 
+  ,router:router
+}
