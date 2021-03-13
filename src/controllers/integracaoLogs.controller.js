@@ -38,16 +38,7 @@ const integracaoLogs = {};
 
 
 
-// Routes
-/**
- * @swagger
- * /getLogin:
- *  get:
- *    description: Use to request all customers
- *    responses:
- *      '200':
- *        description: A successful response
- */
+
 integracaoLogs.getLogin = (req, res) => {
 
     const login = req.params.login
@@ -91,7 +82,6 @@ integracaoLogs.getLogin = (req, res) => {
         })
 
 }
-
 
 
 integracaoLogs.getSucursales = (req, res) => {
@@ -418,6 +408,7 @@ integracaoLogs.putServiciosReturn = (req, res) => {
 }
 
 
+//#region   Envoo e retorno routeasy
 
 integracaoLogs.postRetornoRouteasy = async (req, res) => {
 
@@ -446,6 +437,8 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
             }
         }
 
+    
+
         let pool = await sql.connect(config)
 
 
@@ -453,10 +446,11 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
         let result2 = await pool.request()
             .input('COD_ROUTER', sql.VarChar(sql.MAX), cod_roteirizacao)
             .input('ZONA', sql.VarChar(sql.MAX), cod_rota)
-            .input('JSON', sql.VarChar(sql.MAX), req.body)
+            .input('JSON', sql.VarChar(sql.MAX), JSON.stringify(req.body) )
             .input('JSON_PARSE', sql.VarChar(sql.MAX), JSON.stringify(parse))
             .input('TOKEN', sql.VarChar(sql.MAX), parse[0].first_version)
-            .input('TIPO', sql.Char(1), 'E')
+            .input('TIPO', sql.Char(1), 'R')
+            .input('SITE', sql.VarChar(sql.MAX), parse[0].site)
             // .output('output_parameter', sql.VarChar(50))
             .execute('SP_SAVE_JSON_ROTEIRIZACAO_PAYLOAD')
 
@@ -656,6 +650,7 @@ integracaoLogs.postEnvioRouteasy = async (req, res, next) => {
 
 }
 
+//#endregion
 
 integracaoLogs.getCron = (req, res) => {
 
@@ -700,13 +695,14 @@ integracaoLogs.getCron = (req, res) => {
 module.exports = integracaoLogs;
 
 
-//#region  functions
+//#region  functions (parse_retorno_routeasy)
 
 
 function parse_retorno_routeasy(req) {
 
 
     const route = req.body.routing.name.split('-')
+    const site = req.body.routing.site
     const cod_roteirizacao = route[0]
     const cod_rota = route[1]
     const rotas = req.body.results.routes
@@ -737,8 +733,6 @@ function parse_retorno_routeasy(req) {
                     departure_time: order.departure_time
                 }
 
-
-
                 directions.forEach(function (item) {
 
                     // console.log(item ,'paulo')
@@ -765,13 +759,14 @@ function parse_retorno_routeasy(req) {
         })
 
         const rotorno = {
-            _id: item._id,
-            cod_roteirizacao: cod_roteirizacao,
-            cod_rota: cod_rota,
-            first_version: req.body.routing.data.first_version,
-            ident_veiculo: item.name,
-            kms: item.distance,
-            locations: localtions
+            _id                 : item._id,
+            cod_roteirizacao    : cod_roteirizacao,
+            cod_rota            : cod_rota,
+            first_version       : req.body.routing.data.first_version,
+            ident_veiculo       : item.name,
+            kms                 : item.distance,
+            locations           : localtions,
+            site                : site
         }
 
         retornos.push(rotorno)

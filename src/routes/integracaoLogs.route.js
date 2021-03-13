@@ -1,53 +1,34 @@
-const express       = require('express');
-const router        = express.Router();
-const routerFator   = express.Router();
-const cors          = require('cors');
+const express = require('express');
+const router = express.Router();
+const routerFator = express.Router();
+const cors = require('cors');
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 
-const integracaosCtrl   =  require('../controllers/integracaoLogs.controller');
-const integracaoLogs    = require('../controllers/integracaoLogs.controller');
+const integracaosCtrl = require('../controllers/integracaoLogs.controller');
+const integracaoLogs = require('../controllers/integracaoLogs.controller');
 const swaggerJSDoc = require('swagger-jsdoc');
 
 // Extended: https://swagger.io/specification/#infoObject
 const swaggerOptions = {
-    swaggerDefinition: {
-      info: {
-        version: "1.0.0",
-        title: "Documentation  API -TopRoute -Colombia",
-        description: "Api TopRoute ",
-        contact: {
-          name: "Greentop "
-        },
-        servers: ["http://localhost:3000"]
-      }
-    },
-    // ['.routes/*.js']
-    apis: [__filename]
-  };
+  swaggerDefinition: {
+    info: {
+      version: "1.0.0",
+      title: "Documentation  API -TopRoute -Colombia",
+      description: "Api TopRoute ",
+      contact: {
+        name: "Greentop "
+      },
+      servers: ["http://localhost:3000"]
+    }
+  },
+  // ['.routes/*.js']
+  apis: [__filename]
+};
 
-  const swaggerOptionsFator = {
-    swaggerDefinition: {
-      info: {
-        version: "1.0.0",
-        title: "Documentation  API -TopRoute -Colombia",
-        description: "Api TopRoute ",
-        contact: {
-          name: "Greentop "
-        },
-        servers: ["http://localhost:3000"]
-      }
-    },
-    // ['.routes/*.js']
-    apis: [__filename]
-  };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 router.use("/api-documentations", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-const swaggerDocsFator = swaggerJsDoc(swaggerOptionsFator);
-routerFator.use("/api-documentations-fator", swaggerUi.serve, swaggerUi.setup(swaggerDocsFator));
-
 
 
 // Routes
@@ -68,8 +49,8 @@ routerFator.use("/api-documentations-fator", swaggerUi.serve, swaggerUi.setup(sw
  */
 router.get("/api/customers/:contrasena", (req, res) => {
 
-    const reqs  =req.params.contrasena
-    res.status(200).json( {"name":reqs });
+  const reqs = req.params.contrasena
+  res.status(200).json({ "name": reqs });
 });
 
 
@@ -94,7 +75,7 @@ router.get("/api/customers/:contrasena", (req, res) => {
  *        description: sucesso  
  */
 //buscar login 
-router.get('/api/login/:login/:contrasena',cors(),integracaosCtrl.getLogin);
+router.get('/api/login/:login/:contrasena', cors(), integracaosCtrl.getLogin);
 
 /**
  * @swagger
@@ -104,8 +85,8 @@ router.get('/api/login/:login/:contrasena',cors(),integracaosCtrl.getLogin);
  *    responses:
  *      '200':
  *        description: A successful response
- */ 
-router.get('/api/sucursales',cors(),integracaosCtrl.getSucursales);
+ */
+router.get('/api/sucursales', cors(), integracaosCtrl.getSucursales);
 
 
 
@@ -125,17 +106,17 @@ router.get('/api/sucursales',cors(),integracaosCtrl.getSucursales);
  *      '404':
  *        description: Caminho não  
  */
-router.get('/api/routers/:COD_SUCURSAL',integracaosCtrl.getRouters);
+router.get('/api/routers/:COD_SUCURSAL', integracaosCtrl.getRouters);
 
 //Buscar zonas da roteirizacao selecionada
-router.get('/api/zonas/:cod_sucursal',  integracaosCtrl.getZonasSucursales);
+router.get('/api/zonas/:cod_sucursal', integracaosCtrl.getZonasSucursales);
 
 //buscar servicios da roteirizacao selecionada
-router.get('/api/routers/servicios/:cod_router',  integracaosCtrl.getServiciosRouter);
+router.get('/api/routers/servicios/:cod_router', integracaosCtrl.getServiciosRouter);
 
 
 //buscar veiculo da sucursal
-router.get('/api/vehiculos/:cod_sucursal',integracaosCtrl.getVehiculosSucursales)
+router.get('/api/vehiculos/:cod_sucursal', integracaosCtrl.getVehiculosSucursales)
 
 
 /**
@@ -156,7 +137,7 @@ router.get('/api/vehiculos/:cod_sucursal',integracaosCtrl.getVehiculosSucursales
  *        description: Successfully created user
  */
 //atualiza servico com base no retorno routeasy
-router.put('/api/updateServicios/:servicios_codigo',integracaosCtrl.putServiciosReturn);
+router.put('/api/updateServicios/:servicios_codigo', integracaosCtrl.putServiciosReturn);
 
 
 /**
@@ -177,7 +158,7 @@ router.put('/api/updateServicios/:servicios_codigo',integracaosCtrl.putServicios
  *        description: Successfully created user
  */
 //atualiza servico com base no retorno routeasy
-router.put('/api/updateServicios/:servicios_codigo',integracaosCtrl.putServiciosReturn);
+router.put('/api/updateServicios/:servicios_codigo', integracaosCtrl.putServiciosReturn);
 
 
 
@@ -189,8 +170,8 @@ router.put('/api/updateServicios/:servicios_codigo',integracaosCtrl.putServicios
  *    responses:
  *      '200':
  *        description: A successful response
- */ 
-router.get('/api/cron',cors(),integracaosCtrl.getCron);
+ */
+router.get('/api/cron', cors(), integracaosCtrl.getCron);
 
 
 
@@ -219,6 +200,7 @@ router.put('/api/putRota', integracaoLogs.putRota);
 
 router.put('/api/PUT_ROTA_DOC_REAL', integracaoLogs.put_clear_cajas)
 
+//#region swagger /api/envioRouteasy
 /**
  * @swagger
  * /api/updateServicios/:
@@ -235,6 +217,7 @@ router.put('/api/PUT_ROTA_DOC_REAL', integracaoLogs.put_clear_cajas)
  *      '201':
  *        description: Successfully creaUPDATEted user
  */
+//#endregion
 // ENVIA A ROUTEIRIZACAO POR CAIXA OU TODAS AS ROTAS
 router.post('/api/envioRouteasy', cors(), integracaoLogs.postEnvioRouteasy)
 
