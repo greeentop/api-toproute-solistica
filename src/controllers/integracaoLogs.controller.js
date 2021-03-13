@@ -421,6 +421,9 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
         const cod_roteirizacao = route[0]
         const cod_rota = route[1]
         const parse = parse_retorno_routeasy(req)
+        res.send(JSON.stringify({msg:'processado'}))
+
+
 
         const host = '190.248.148.243'
         const psw = 'Solistica2020'
@@ -726,7 +729,7 @@ function RetornRouteasyIntegration(retornos) {
                     ,a.VEHICULE_PLACA               =   '${retornos[0].ident_veiculo}'
                     ,a.VEHICULO_PLACA               =   '${retornos[0].ident_veiculo}'
                     FROM  TB_INTEGRACION_SERVICIOS  a  
-                WHERE SERVICIOS_CODIGO = ${ret.order_number}
+                WHERE SERVICIOS_CODIGO = '${ret.order_number}'
                     AND COD_ROUTER = ${retornos[0].cod_roteirizacao} `
 
                 console.log(sqlQ);
