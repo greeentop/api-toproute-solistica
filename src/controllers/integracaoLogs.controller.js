@@ -12,6 +12,8 @@ const axios = require('axios')
 
 const sha1 = require('js-sha1');
 
+
+
 // const axios  =  require("axios");
 const { log } = require("console");
 const { connected, cpuUsage } = require("process");
@@ -414,6 +416,7 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
 
     try {
 
+
         const route = req.body.routing.name.split('-')
         const cod_roteirizacao = route[0]
         const cod_rota = route[1]
@@ -451,114 +454,41 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
             .input('TOKEN', sql.VarChar(sql.MAX), parse[0].first_version)
             .input('TIPO', sql.Char(1), 'R')
             .input('SITE', sql.VarChar(sql.MAX), parse[0].site)
-            // .output('output_parameter', sql.VarChar(50))
             .execute('SP_SAVE_JSON_ROTEIRIZACAO_PAYLOAD')
 
 
-        // console.dir(result2)
+
+        
+        const data = new Date();
+      
+        const dataFormatada =          ("0000" + ((data.getFullYear()))).slice(-4) 
+        + "-" 
+        + ("00" + ((data.getMonth()+1 ))).slice(-2) 
+        + "-" 
+        + ("00" + ((data.getDay()+1 ))).slice(-2) 
+        + "T" 
+        + data.getHours()  
+        + data.getMinutes(); 
+        
+        const nomearquivo = dataFormatada  +"-"+ req.body._id + ".json"
+        console.log(nomearquivo)
+
+        fs.writeFile(`src/json/${nomearquivo}`, JSON.stringify(req.body) , function(err) {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log("The file was saved!");
+            }
+        }); 
 
         res.json('Salvo')
-        pool.close();
+        //pool.close();
 
     } catch (err) {
-        // console.log(err)
 
         res.json(err)
-        pool.close();
-        // console.log(err)
-        // ... error checks
-    }
+        //pool.close();
 
-
-
-    return
-
-    // const parse  =  req.body
-    const parse = parse_retorno_routeasy(req)
-
-    try {
-
-
-        //         conn.close();
-        //         conn.connect()
-        //             .then(async function () {
-
-
-        //                 // update retorno veiculo e ordem
-        //                 parse.forEach(async function (router) {
-
-
-
-        //                      await router.locations.forEach(async function (serv) {
-
-        //                         const sqlQ ='exec teste'
-        //                         // const sqlQ = "update a set a.SERVICIOS_SECUENCIA_ENTREGA  ='" + serv.order + "', a.VEHICULE_PLACA  = '" + router.ident_veiculo + "' from  TB_INTEGRACION_SERVICIOS  a where SERVICIOS_CODIGO = '" + serv.order_number + "'  and COD_ROUTER = " + router.cod_roteirizacao
-
-        //                         var req = new sql.Request(conn);
-
-
-        //                          await req.query(sqlQ)
-        //                             .then( async function (result) {
-
-        //                                 conn.close();
-        //                                 console.log(sqlQ)
-        //                                 // res.json(result.rowsAffected);
-        //                             })
-        //                             .catch(function (err, status) {
-        //                                 conn.close();
-
-        //                                 console.log(err)
-        //                                 // res.status(400).send('error get data' + err);
-        //                             });
-
-        //                     })
-        //                 })
-
-        //             })
-        //             .catch(function (err) {
-        //                 conn.close();
-        //                 console.log(err + ' : catch')
-        //             })
-
-
-
-
-
-        //         res.send('atualizado')
-        // return
-
-        conn.close();
-        conn.connect()
-            .then(function () {
-                const transaction = new sql.Transaction(conn)
-                transaction.begin(err => {
-                    // ... error checks
-
-                    //   console.log(parse[0])
-
-                    const request = new sql.Request(transaction)
-                    request.query("insert into TB_JSON_PAYLOAD ( cod_router ,zona, json,JSON_PARSE, TOKEN ,TIPO, dt_created) values ('" + parse[0].cod_roteirizacao + "','" + parse[0].cod_rota + "','" + JSON.stringify(req.body) + "','" + JSON.stringify(parse) + "','" + parse[0].first_version + "','R' , getdate())", (err, result) => {
-                        // ... error checks
-
-                        transaction.commit(err => {
-                            conn.close();
-                            // ... error checks
-
-                            // console.log("Transaction committed. : " +    JSON.stringify( transaction))
-
-                            res.json('Enviado com sucesso')
-                        })
-                    })
-                })
-            })
-            .catch(function (err) {
-                conn.close();
-                res.status(400).json('error get data fora');
-            })
-
-
-    } catch (error) {
-        res.json(error)
     }
 
 

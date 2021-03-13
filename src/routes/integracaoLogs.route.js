@@ -7,7 +7,7 @@ const swaggerUi = require("swagger-ui-express");
 
 
 const integracaosCtrl = require('../controllers/integracaoLogs.controller');
-const integracaoLogs = require('../controllers/integracaoLogs.controller');
+
 const swaggerJSDoc = require('swagger-jsdoc');
 
 // Extended: https://swagger.io/specification/#infoObject
@@ -194,11 +194,11 @@ router.get('/api/cron', cors(), integracaosCtrl.getCron);
  *        description: Atualiza a caixa de rota(enviar para caixas)  
  */
 // ENVIA A ROUTEIRIZACAO POR CAIXA OU TODAS AS ROTAS
-router.put('/api/putRota', integracaoLogs.putRota);
+router.put('/api/putRota', integracaosCtrl.putRota);
 
 
 
-router.put('/api/PUT_ROTA_DOC_REAL', integracaoLogs.put_clear_cajas)
+router.put('/api/PUT_ROTA_DOC_REAL', integracaosCtrl.put_clear_cajas)
 
 //#region swagger /api/envioRouteasy
 /**
@@ -219,10 +219,10 @@ router.put('/api/PUT_ROTA_DOC_REAL', integracaoLogs.put_clear_cajas)
  */
 //#endregion
 // ENVIA A ROUTEIRIZACAO POR CAIXA OU TODAS AS ROTAS
-router.post('/api/envioRouteasy', cors(), integracaoLogs.postEnvioRouteasy)
+router.post('/api/envioRouteasy', cors(), integracaosCtrl.postEnvioRouteasy)
 
 
-router.post('/api/retornoRouteasy', cors(), integracaoLogs.postRetornoRouteasy)
+router.post('/api/retornoRouteasy', cors(), integracaosCtrl.postRetornoRouteasy)
 
 module.exports = router;
 
