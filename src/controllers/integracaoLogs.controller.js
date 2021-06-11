@@ -421,7 +421,10 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
         const cod_roteirizacao = route[0]
         const cod_rota = route[1]
         const parse = parse_retorno_routeasy(req)
-        res.send(JSON.stringify({msg:'processado'}))
+
+        // console.log(parse[0])
+
+        //res.send(JSON.stringify({msg:'processado'}))
 
 
 
@@ -474,17 +477,18 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
         + data.getMinutes(); 
         
         const nomearquivo = dataFormatada  +"-"+ req.body._id + ".json"
-        console.log(nomearquivo)
+        //console.log(nomearquivo)
 
-        fs.writeFile(`src/json/${nomearquivo}`, JSON.stringify(req.body) , function(err) {
-            if(err) {
-                console.log(err);
-            } else {
-                console.log("The file was saved!");
-            }
-        }); 
+        // fs.writeFile(`src/json/${nomearquivo}`, JSON.stringify(req.body) , function(err) {
+        //     if(err) {
+        //         console.log(err);
+        //     } else {
+        //         console.log("The file was saved!");
+        //     }
+        // }); 
 
-        res.json('Salvo')
+        res.send(JSON.stringify({msg:'processado'}))
+        //res.json('Salvo')
         //pool.close();
 
     } catch (err) {
@@ -629,7 +633,13 @@ module.exports = integracaoLogs;
 
 
 //#region  functions (parse_retorno_routeasy)
-
+function verificar(arr, procurar) {
+    var chave = procurar[0];
+    var valor = procurar[1];
+    return !!arr.filter(function (el) {
+        return el[chave] == valor;
+    }).length;
+}
 
 function parse_retorno_routeasy(req) {
 
@@ -645,39 +655,110 @@ function parse_retorno_routeasy(req) {
     const paulo1 = req.body.results.routes
 
 
-    routes.forEach(function (item) {
+    routes.forEach(route=>{
 
-        // const directions  =  item.directions
-        const delivery_order = item.delivery_order
-        const directions = item.directions
+        const rota ={
+            cod_roteirizacao    :   cod_roteirizacao,
+            _id                 :   route._id,
+            veiculo             :   route.name,
+            km_distanc          :   route.distance,
+            servicos            :   []
+        }
+
+        route.delivery_order.forEach(serv =>{
+
+            if(serv.type !='depot'){
+                const servico ={
+                    _id: serv._id,
+                    location: serv.location,
+                    ordem :   serv.order,
+                    distance: serv.distance,
+                    duration: serv.duration,
+                    documento:undefined
+                    
+                }
+
+ 
+
+                route.directions.filter(function( obj ) {
+
+                    if (obj.end.delivery._id == servico.location) {
+                        servico.documento  = obj.end.delivery.order_number
+
+                    }
+        
+                  });
+                
+
+                
+                rota.servicos.push(servico);
+            }
+        })
+
+        
+        const  verifica  = verificar(retornos, ['veiculo', rota.rota])
+        if(verifica==false){
+            console.log(`não achou ${rota.veiculo}`)
+            retornos.push(rota)
+        }
+        
+        
+        // const achou    =  retornos.indexOf(rota); 
+        // if(achou===1){
+        //     console.log('ja existe')
+        // }else{
+        //     retornos.push(rota)
+
+        // }
+
+    })
+
+    //console.log(retornos)
+    salvarnew(retornos)
+    // RetornRouteasyIntegration(retornos)
+
+
+    return retornos
+
+    //#region  comentado  antiga fomra de atualizar os dados da routeasy retorno colombia
+
+    return
+    routes.forEach(function (item) {
+        var veiculoAux =''
+
+        const delivery_order    = item.delivery_order  // aonde tem  o sequenciamento  no campo "order"  e tem referencia com o campo "location" com array 
+        const directions        = item.directions
 
         const localtions = []
 
         delivery_order.forEach(function (order) {
 
+
+       
             if (order.type != "depot") {
+                
 
                 const location = {
-                    location: order.location,
-                    order: order.order,
-                    distance: order.distance,
-                    duration: order.duration,
-                    arrival_time: order.arrival_time,
-                    departure_time: order.departure_time
+                    location        : order.location,
+                    order           : order.order,
+                    distance        : order.distance,
+                    duration        : order.duration,
+                    arrival_time    : order.arrival_time,
+                    departure_time  : order.departure_time
                 }
 
                 directions.forEach(function (item) {
 
                     // console.log(item ,'paulo')
-                    if (item.end.delivery._id === order.location) {
+                    if (item.end.delivery._id == order.location) {
 
-                        location.lat = item.end.delivery.address.geocode.lat
-                        location.lng = item.end.delivery.address.geocode.lng
-                        location.type = item.end.delivery.type
-                        location.service_type = item.end.delivery.service_type
-                        location.order_number = item.end.delivery.order_number
-                        location.name = item.end.delivery.name
-                        location.address_input = item.end.delivery.address_input
+                        location.lat            = item.end.delivery.address.geocode.lat
+                        location.lng            = item.end.delivery.address.geocode.lng
+                        location.type           = item.end.delivery.type
+                        location.service_type   = item.end.delivery.service_type
+                        location.order_number   = item.end.delivery.order_number
+                        location.name           = item.end.delivery.name
+                        location.address_input  = item.end.delivery.address_input
 
 
 
@@ -705,46 +786,151 @@ function parse_retorno_routeasy(req) {
         retornos.push(rotorno)
     })
 
-    RetornRouteasyIntegration(retornos)
+     RetornRouteasyIntegration(retornos)
 
 
     return retornos
+
+    //#endregion
 }
 
 
 
 
-function RetornRouteasyIntegration(retornos) {
+function salvarnew (retornos){
+    conn.close();
+    conn.connect()
+        .then(function () {
+            retornos.forEach(ret => {
+                const transaction = new sql.Transaction(conn)
+                transaction.begin(err => {
+                    // ... error checks
+                    const request = new sql.Request(transaction)
+
+                    if (ret.veiculo === 'BJF020') {
+                        ret.servicos.forEach(async serv => {
+
+                            request.query(`update TB_INTEGRACION_SERVICIOS set SERVICIOS_SECUENCIA_ENTREGA = ${serv.ordem} , VEHICULE_PLACA = '${ret.veiculo}',  VEHICULO_PLACA = '${ret.veiculo}'  WHERE SERVICIOS_CODIGO = '${serv.documento}' AND COD_ROUTER = ${ret.cod_roteirizacao} `, (err, result) => {
+                                // ... error checks
+
+
+                                console.log(`update TB_INTEGRACION_SERVICIOS set SERVICIOS_SECUENCIA_ENTREGA = ${serv.ordem} , VEHICULE_PLACA = '${ret.veiculo}',  VEHICULO_PLACA = '${ret.veiculo}'  WHERE SERVICIOS_CODIGO = '${serv.documento}' AND COD_ROUTER = ${ret.cod_roteirizacao} `)
+
+                                transaction.commit(err => {
+                                    conn.close();
+                                    // ... error checks
+
+                                    console.log("Transaction committed.")
+                                    // res.json({ msg: 'Token de retorno do envio', token: response.data.token })
+                                    // res.json('Enviado com sucesso')
+                                })
+                            })
+                        })
+                    }
+                })
+
+            })
+        })
+        .catch(function (err) {
+            conn.close();
+            console.log('error get data fora')
+            // res.status(400).json('error get data fora');
+        })
+}
+
+
+ function RetornRouteasyIntegration(retornos) {
+
+
+
+    //console.log( retornos)
 
     conn.close();
 
     conn.connect()
-        .then(function () {
+        .then(function  () {
 
-            retornos[0].locations.forEach(function (ret) {
+            try {
+                
+                retornos.forEach(ret =>{
+                    
 
-                const sqlQ = `
-                UPDATE a SET  
-                    a.SERVICIOS_SECUENCIA_ENTREGA  =   '${ret.order}'   
-                    ,a.VEHICULE_PLACA               =   '${retornos[0].ident_veiculo}'
-                    ,a.VEHICULO_PLACA               =   '${retornos[0].ident_veiculo}'
-                    FROM  TB_INTEGRACION_SERVICIOS  a  
-                WHERE SERVICIOS_CODIGO = '${ret.order_number}'
-                    AND COD_ROUTER = ${retornos[0].cod_roteirizacao} `
+                    if (ret.veiculo === 'BJF020') {
 
-                console.log(sqlQ);
 
-                var req = new sql.Request(conn);
 
-                req.query(sqlQ)
-                    .then(function (result) {
-                        conn.close();
-                    })
-                    .catch(function (err, status) {
-                        conn.close();
-                        // res.status(400).send('error get data' + err);
-                    });
-            })
+                        ret.servicos.forEach(async serv => {
+
+                            console.log(`Atualizado o documento :  ${serv.documento} na ordem : ${serv.ordem} da router: ${ret.cod_roteirizacao}`)
+
+                            const sqlQ = `
+                                                UPDATE a SET  
+                                                    a.SERVICIOS_SECUENCIA_ENTREGA  =   '${serv.ordem}'   
+                                                    ,a.VEHICULE_PLACA               =   '${ret.veiculo}'
+                                                    ,a.VEHICULO_PLACA               =   '${ret.veiculo}'
+                                                    FROM  TB_INTEGRACION_SERVICIOS  a  
+                                                WHERE SERVICIOS_CODIGO = '${serv.documento}'
+                                                    AND COD_ROUTER = ${ret.cod_roteirizacao} `
+
+                            var req = new sql.Request(conn);
+
+                            await req.query(sqlQ)
+                                .then(function (result) {
+                                    //console.log(result)
+                                    conn.close();
+                                })
+                                .catch(function (err, status) {
+                                    console.log('error get data pf :' + err)
+                                    conn.close();
+                                    // res.status(400).send('error get data' + err);
+                                });
+                        })
+
+                    }
+
+                        // veiculoAux = retornos[0].ident_veiculo
+               
+
+
+                })
+
+
+                // retornos[0].locations.forEach(function (ret) {
+
+                //              const sqlQ = `
+                //              UPDATE a SET  
+                //                  a.SERVICIOS_SECUENCIA_ENTREGA  =   '${ret.order}'   
+                //                  ,a.VEHICULE_PLACA               =   '${retornos[0].ident_veiculo}'
+                //                  ,a.VEHICULO_PLACA               =   '${retornos[0].ident_veiculo}'
+                //                  FROM  TB_INTEGRACION_SERVICIOS  a  
+                //              WHERE SERVICIOS_CODIGO = '${ret.order_number}'
+                //                  AND COD_ROUTER = ${retornos[0].cod_roteirizacao} `
+             
+                //              var req = new sql.Request(conn);
+             
+                //              req.query(sqlQ)
+                //                  .then(function (result) {
+                //                      //console.log(result)
+                //                      conn.close();
+                //                  })
+                //                  .catch(function (err, status) {
+                //                      //console.log('error get data pf :' + err)
+                //                      conn.close();
+                //                      // res.status(400).send('error get data' + err);
+                //                  });
+     
+                //                  veiculoAux = retornos[0].ident_veiculo
+                        
+   
+    
+                  
+                // })
+                
+            } catch (error) {
+                console.log( 'erro:' + error)
+                
+            }
+
 
         })
 }
