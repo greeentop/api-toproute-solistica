@@ -842,7 +842,7 @@ function processaRetornoJson(_JSON) {
             const transaction = new sql.Transaction(conn)
             transaction.begin(err => {
                 const request = new sql.Request(transaction)
-                request.query(`Exec  testepfantin '${_JSON}'`, (err, result) => {
+                request.query(`Exec  SP_RETORNO_JSON_ROTEIRIZACAO_ROUTEASY '${_JSON}'`, (err, result) => {
                      
                     transaction.commit(err => {
                         conn.close();
