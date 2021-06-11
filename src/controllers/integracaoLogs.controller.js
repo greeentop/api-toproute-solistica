@@ -18,6 +18,7 @@ const sha1 = require('js-sha1');
 const { log } = require("console");
 const { connected, cpuUsage } = require("process");
 const { route } = require("../routes/integracaoLogs.route");
+const { compileFunction } = require("vm");
 
 let axiosConfig = {
     headers: {
@@ -412,73 +413,103 @@ integracaoLogs.putServiciosReturn = (req, res) => {
 
 //#region   Envoo e retorno routeasy
 
+integracaoLogs.postProcessaRetorno = async (req, res) => {
+
+    try {
+
+                
+        const route             = req.body.routing.name.split('-')
+        const first_version     = req.body.routing.data.first_version
+        const site              = req.body.routing.site
+        const member              = req.body.routing.member
+        const cod_roteirizacao  = route[0]
+        const cod_rota          = route[1]
+        const parse             = parse_retorno_routeasy(req)
+        
+         
+        processaRetornoJson(JSON.stringify(req.body))
+        
+        res.send(JSON.stringify({msg:'Retorno processado '  }))
+
+
+    } catch (err) {
+
+        res.json(err)
+        
+    }
+
+
+}
+
 integracaoLogs.postRetornoRouteasy = async (req, res) => {
 
     try {
 
-
-        const route = req.body.routing.name.split('-')
-        const cod_roteirizacao = route[0]
-        const cod_rota = route[1]
-        const parse = parse_retorno_routeasy(req)
-
+                
+        const route             = req.body.routing.name.split('-')
+        const first_version     = req.body.routing.data.first_version
+        const site              = req.body.routing.site
+        const member              = req.body.routing.member
+        const cod_roteirizacao  = route[0]
+        const cod_rota          = route[1]
+        const parse             = parse_retorno_routeasy(req)
+        
+        console.log('entrou')
          
+       
 
+
+        // const host = '190.248.148.243'
+        // const psw = 'Solistica2020'
+        // const user = 'RouteEasy'
+        // const database = 'RouteEasy'
+
+        // const config = {
+        //     user: user,
+        //     password: psw,
+        //     server: host,
+        //     database: database,
+        //     port: 2433
+        //     ,
+        //     pool: {
+        //         max: 2,
+        //         min: 0,
+        //         idleTimeoutMillis: 3000
+        //     }
+        // }
+
+        //     const pool = await sql.connect(config)
+
+        //     // Stored procedure
+        //     const result2 = await pool.request()
+        //         .input('COD_ROUTER', sql.VarChar(sql.MAX), cod_roteirizacao)
+        //         .input('ZONA', sql.VarChar(sql.MAX), cod_rota)
+        //         .input('JSON', sql.VarChar(sql.MAX), JSON.stringify(req.body) )
+        //         .input('JSON_PARSE', sql.VarChar(sql.MAX), JSON.stringify(req.body))
+        //         .input('TOKEN', sql.VarChar(sql.MAX), first_version)
+        //         .input('TIPO', sql.Char(1), 'R')
+        //         .input('SITE', sql.VarChar(sql.MAX), site)
+        //         .execute('SP_SAVE_JSON_ROTEIRIZACAO_PAYLOAD')
+
+        //     console.log(result2)
+
+        //    await pool.close();
+
+        SaveJson(cod_roteirizacao, cod_rota, JSON.stringify(req.body), JSON.stringify(parse) , first_version, 'R', site,member) 
+               
         
-
-        //res.send(JSON.stringify({msg:'processado'}))
-
-
-
-        const host = '190.248.148.243'
-        const psw = 'Solistica2020'
-        const user = 'RouteEasy'
-        const database = 'RouteEasy'
-
-        const config = {
-            user: user,
-            password: psw,
-            server: host,
-            database: database,
-            port: 2433,
-            pool: {
-                max: 10,
-                min: 0,
-                idleTimeoutMillis: 30000
-            }
-        }
-
-    
-
-        let pool = await sql.connect(config)
-
-
-        // Stored procedure
-        let result2 = await pool.request()
-            .input('COD_ROUTER', sql.VarChar(sql.MAX), cod_roteirizacao)
-            .input('ZONA', sql.VarChar(sql.MAX), cod_rota)
-            .input('JSON', sql.VarChar(sql.MAX), JSON.stringify(req.body) )
-            .input('JSON_PARSE', sql.VarChar(sql.MAX), JSON.stringify(parse))
-            .input('TOKEN', sql.VarChar(sql.MAX), parse[0].first_version)
-            .input('TIPO', sql.Char(1), 'R')
-            .input('SITE', sql.VarChar(sql.MAX), parse[0].site)
-            .execute('SP_SAVE_JSON_ROTEIRIZACAO_PAYLOAD')
-
-
-
-        
-        const data = new Date();
+        // const data = new Date();
       
-        const dataFormatada =          ("0000" + ((data.getFullYear()))).slice(-4) 
-        + "-" 
-        + ("00" + ((data.getMonth()+1 ))).slice(-2) 
-        + "-" 
-        + ("00" + ((data.getDay()+1 ))).slice(-2) 
-        + "T" 
-        + data.getHours()  
-        + data.getMinutes(); 
+        // const dataFormatada =          ("0000" + ((data.getFullYear()))).slice(-4) 
+        // + "-" 
+        // + ("00" + ((data.getMonth()+1 ))).slice(-2) 
+        // + "-" 
+        // + ("00" + ((data.getDay()+1 ))).slice(-2) 
+        // + "T" 
+        // + data.getHours()  
+        // + data.getMinutes(); 
         
-        const nomearquivo = dataFormatada  +"-"+ req.body._id + ".json"
+        //const nomearquivo = dataFormatada  +"-"+ req.body._id + ".json"
         //console.log(nomearquivo)
 
         // fs.writeFile(`src/json/${nomearquivo}`, JSON.stringify(req.body) , function(err) {
@@ -489,9 +520,9 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
         //     }
         // }); 
 
+
         res.send(JSON.stringify({msg:'processado : '  }))
         //res.json('Salvo')
-        //pool.close();
 
     } catch (err) {
 
@@ -801,6 +832,113 @@ function parse_retorno_routeasy(req) {
 
     //#endregion
 }
+
+
+function processaRetornoJson(_JSON) {
+    conn.close();
+    conn.connect()
+        .then(function () {
+            //retornos.forEach(ret => {
+            const transaction = new sql.Transaction(conn)
+            transaction.begin(err => {
+                const request = new sql.Request(transaction)
+                request.query(`Exec  testepfantin '${_JSON}'`, (err, result) => {
+                     
+                    transaction.commit(err => {
+                        conn.close();
+                        console.log("Transaction committed." + err)
+                    })
+                })
+
+            })
+
+        })
+        .catch(function (err) {
+            conn.close();
+            console.log('error get data fora')
+        })
+
+}
+
+function SaveJson(COD_ROUTER, ZONA, _JSON,_JSON_PARSE, TOKEN, TIPO, SITE, MEMBER) {
+    conn.close();
+    conn.connect()
+        .then(function () {
+            //retornos.forEach(ret => {
+            const transaction = new sql.Transaction(conn)
+            transaction.begin(err => {
+                // ... error checks
+                const request = new sql.Request(transaction)
+
+                     const data = new Date();
+      
+                    const dataFormatada =          ("0000" + ((data.getFullYear()))).slice(-4) 
+                    + "-" 
+                    + ("00" + ((data.getMonth()+1 ))).slice(-2) 
+                    + "-" 
+                    + ("00" + ((data.getDay()+1 ))).slice(-2) 
+                    + " " 
+                    + ("00"+ ((data.getHours()))).slice(-2) 
+                    + ":" 
+                    + ( ((data.getMinutes()))) 
+
+          
+                request.query(`
+                        INSERT INTO  TB_JSON_PAYLOAD 
+                            ( COD_ROUTER
+                            ,ZONA
+                            ,JSON
+                            ,JSON_PARSE
+                            ,DT_CREATED  
+                            ,TOKEN
+                            ,TIPO
+                            ,SITE
+                            ,LOGIN)
+                        values( 
+                            '${COD_ROUTER}', 
+                            '${ZONA}',
+                            '${_JSON}',
+                            '${_JSON_PARSE}',
+                            '${dataFormatada}',
+                            '${TOKEN}',
+                            '${TIPO}',
+                            '${SITE}',
+                            '${MEMBER}')`, (err, result) => {
+
+                                
+                                
+                                console.log(`  INSERT INTO  TB_JSON_PAYLOAD ( COD_ROUTER,ZONA,DT_CREATED  ,TOKEN,TIPO, SITE)  values( '${COD_ROUTER}', '${ZONA}',  '${dataFormatada}','${TOKEN}','${TIPO}','${SITE}')`)
+
+
+                                
+
+                                transaction.commit(err => {
+
+
+                                                                        
+                                    conn.close();
+                                    // ... error checks
+
+                                    console.log("Transaction committed." + err)
+                                    // res.json({ msg: 'Token de retorno do envio', token: response.data.token })
+                                    // res.json('Enviado com sucesso')
+                                })
+                })
+
+
+
+            })
+
+            //})
+        })
+        .catch(function (err) {
+            conn.close();
+            console.log('error get data fora')
+            // res.status(400).json('error get data fora');
+        })
+}
+
+
 
 
 

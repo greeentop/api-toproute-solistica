@@ -223,6 +223,7 @@ router.post('/api/envioRouteasy', cors(), integracaosCtrl.postEnvioRouteasy)
 
 
 router.post('/api/retornoRouteasy', cors(), integracaosCtrl.postRetornoRouteasy)
+router.post('/api/ProcessaRetorno', cors(), integracaosCtrl.postProcessaRetorno)
 
 module.exports = router;
 
