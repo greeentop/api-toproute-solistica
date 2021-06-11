@@ -807,7 +807,7 @@ function salvarnew (retornos){
                     // ... error checks
                     const request = new sql.Request(transaction)
 
-                    if (ret.veiculo === 'BJF020') {
+                    //if (ret.veiculo === 'BJF020') {
                         ret.servicos.forEach(async serv => {
 
                             request.query(`update TB_INTEGRACION_SERVICIOS set SERVICIOS_SECUENCIA_ENTREGA = ${serv.ordem} , VEHICULE_PLACA = '${ret.veiculo}',  VEHICULO_PLACA = '${ret.veiculo}'  WHERE SERVICIOS_CODIGO = '${serv.documento}' AND COD_ROUTER = ${ret.cod_roteirizacao} `, (err, result) => {
@@ -826,7 +826,7 @@ function salvarnew (retornos){
                                 })
                             })
                         })
-                    }
+                    //}
                 })
 
             })
