@@ -422,7 +422,9 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
         const cod_rota = route[1]
         const parse = parse_retorno_routeasy(req)
 
-        // console.log(parse[0])
+         
+
+        
 
         //res.send(JSON.stringify({msg:'processado'}))
 
@@ -487,7 +489,7 @@ integracaoLogs.postRetornoRouteasy = async (req, res) => {
         //     }
         // }); 
 
-        res.send(JSON.stringify({msg:'processado'}))
+        res.send(JSON.stringify({msg:'processado : '  }))
         //res.json('Salvo')
         //pool.close();
 
@@ -696,12 +698,18 @@ function parse_retorno_routeasy(req) {
         })
 
         
-        const  verifica  = verificar(retornos, ['veiculo', rota.rota])
-        if(verifica==false){
-            console.log(`não achou ${rota.veiculo}`)
-            retornos.push(rota)
-        }
+
+        retornos.push(rota)
         
+        
+
+        // const  verifica  = verificar(retornos, ['veiculo', rota.rota])
+
+        // console.log(verifica)
+        //  if(verifica==false){
+        //      console.log(`não achou ${rota.veiculo}`)
+        //      retornos.push(rota)
+        //  }
         
         // const achou    =  retornos.indexOf(rota); 
         // if(achou===1){
@@ -713,8 +721,8 @@ function parse_retorno_routeasy(req) {
 
     })
 
-    //console.log(retornos)
-    salvarnew(retornos)
+
+    //salvarnew(retornos) // retirado devido ao erro que dava ao salvar etentar atualizar od dados da tabelas aonde fica os serviços
     // RetornRouteasyIntegration(retornos)
 
 
@@ -807,7 +815,9 @@ function salvarnew (retornos){
                     // ... error checks
                     const request = new sql.Request(transaction)
 
-                    //if (ret.veiculo === 'BJF020') {
+                    console.log(ret.veiculo)
+
+                    if (ret.veiculo === 'BJF020') {
                         ret.servicos.forEach(async serv => {
 
                             request.query(`update TB_INTEGRACION_SERVICIOS set SERVICIOS_SECUENCIA_ENTREGA = ${serv.ordem} , VEHICULE_PLACA = '${ret.veiculo}',  VEHICULO_PLACA = '${ret.veiculo}'  WHERE SERVICIOS_CODIGO = '${serv.documento}' AND COD_ROUTER = ${ret.cod_roteirizacao} `, (err, result) => {
@@ -826,7 +836,7 @@ function salvarnew (retornos){
                                 })
                             })
                         })
-                    //}
+                    }
                 })
 
             })
