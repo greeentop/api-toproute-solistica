@@ -218,6 +218,7 @@ router.put('/api/PUT_ROTA_DOC_REAL', integracaosCtrl.put_clear_cajas)
  *        description: Successfully creaUPDATEted user
  */
 //#endregion
+//paulo fantin
 // ENVIA A ROUTEIRIZACAO POR CAIXA OU TODAS AS ROTAS
 router.post('/api/envioRouteasy', cors(), integracaosCtrl.postEnvioRouteasy)
 
