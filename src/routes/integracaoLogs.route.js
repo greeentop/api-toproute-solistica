@@ -12,19 +12,19 @@ const swaggerJSDoc = require('swagger-jsdoc');
 
 // Extended: https://swagger.io/specification/#infoObject
 const swaggerOptions = {
-  swaggerDefinition: {
-    info: {
-      version: "1.0.0",
-      title: "Documentation  API -TopRoute -Colombia",
-      description: "Api TopRoute ",
-      contact: {
-        name: "Greentop "
-      },
-      servers: ["http://localhost:3000"]
-    }
-  },
-  // ['.routes/*.js']
-  apis: [__filename]
+    swaggerDefinition: {
+        info: {
+            version: "1.0.0",
+            title: "Documentation  API -TopRoute -Colombia",
+            description: "Api TopRoute ",
+            contact: {
+                name: "Greentop "
+            },
+            servers: ["http://localhost:3000"]
+        }
+    },
+    // ['.routes/*.js']
+    apis: [__filename]
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -49,8 +49,8 @@ router.use("/api-documentations", swaggerUi.serve, swaggerUi.setup(swaggerDocs))
  */
 router.get("/api/customers/:contrasena", (req, res) => {
 
-  const reqs = req.params.contrasena
-  res.status(200).json({ "name": reqs });
+    const reqs = req.params.contrasena
+    res.status(200).json({ "name": reqs });
 });
 
 
@@ -91,7 +91,7 @@ router.get('/api/sucursales', cors(), integracaosCtrl.getSucursales);
 
 
 
-/**
+/** 
  * @swagger
  * /api/routers/{COD_SUCURSAL}:
  *  get:
